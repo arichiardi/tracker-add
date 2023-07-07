@@ -6,7 +6,7 @@ Requires=network.target
 ### use non root user example below:
 #User=debian-transmission
 Type=simple
-ExecStart=/opt/bin/add-trackers-auto.sh
+ExecStart=/opt/tracker-add/bin/tracker-add-auto.sh
 ExecStop=/bin/kill -s TERM $MAINPID
 ExecStopPost=/bin/rm -f /tmp/TTAA.*.lock
 KillMode=control-group
