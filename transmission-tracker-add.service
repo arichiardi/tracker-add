@@ -10,7 +10,7 @@ ExecStart=/opt/tracker-add/bin/tracker-add-auto.sh
 ExecStop=/bin/kill -s TERM $MAINPID
 ExecStopPost=/bin/sh -c '/bin/rm -vf /tmp/TTAA.*.lock'
 KillMode=control-group
-StandardOutput=null
+StandardOutput=journal
 CPUSchedulingPolicy=idle
 Nice=19
 
