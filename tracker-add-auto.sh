@@ -14,15 +14,15 @@ while true; do
         trackerslist=/tmp/trackers.txt
         for base_url in $trackers; do
             if [ ! -f $trackerslist ]; then
-                curl -o "$trackerslist" "${base_url}"
+                curl -s --output /dev/null --show-error -o "$trackerslist" "${base_url}"
             fi
             Local=$(wc -c <$trackerslist)
             Remote=$(curl -sI "${base_url}" | awk '/Content-Length/ {sub("\r",""); print $2}')
             if [ "$Local" != "$Remote" ]; then
-                curl -o "$trackerslist" "${base_url}"
+                curl -s --output /dev/null --show-error -o "$trackerslist" "${base_url}"
             fi
             echo "URL for ${base_url}"
-            echo "Adding trackers for $torrent_name..."
+            echo "Adding trackers for \"$torrent_name\" ($torrent_hash)..."
             for tracker in $(cat $trackerslist); do
                 echo -n "${tracker}..."
                 if transmission-remote "$host" --auth="$auth" --torrent "${torrent_hash}" -td "${tracker}" | grep -q 'success'; then
@@ -54,7 +54,11 @@ while true; do
                 torrent_name="$(transmission-remote "$host" --auth="$auth" --torrent "$id" --info | grep '^  Name: ' | cut -c 9-)"
                 add_trackers "$hash" "$id" &
                 touch "/tmp/TTAA.$id.lock"
+            else
+                echo "Skipping. Torrent #$id ($hash) was just added."
             fi
+        else
+            echo "Trackers already added for torrent #$id. A file lock was found."
         fi
     done
 done
